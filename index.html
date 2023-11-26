@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celebrity Support Checker</title>
+    <title>VersaceLaurent's Celebrities for Palestine</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 
     <style>
@@ -165,7 +165,7 @@
     </main>
 
     <script>
-        // List of supported celebrities
+        // List of celebrities who support Palestine
         const supportedCelebrities = [
             'Jenna Ortega (actress)', 'Melissa Barrera (actress)', 'Kehlani (musician)', 'Kyrie Irving (NBA player)',
             'Kid Cudi (musician)', 'Biaggio Ali Walsh (boxer)', 'Gigi Hadid (model)', 'Michael Bennett (NFL player)',
@@ -194,13 +194,26 @@
             'ISHOWSPEED (internet personality)', 'Nicola Coughlan (actress)', 'John Legend (musician)', 'Joaquin Phoenix (actress)',
             'Tabria Majors (musician)', 'Islam Makhachev (UFC fighter)', 'Mesut Ozil (football/soccer player)', 'Amr Diab (musician)',
             'Noussair Mazraoui (football/soccer player)', 'Karim Benzema (football/soccer player)', 'Rafaela Plastira (model)',
-            'DJ Snake (musician and disc jockey)'
+            'DJ Snake (musician and disc jockey)', 
         ];
 
-        // List of supported celebrities who do not support the position
+        // List of celebrities who do not support Palestine
         const nonSupportingCelebrities = [
-            'Gal Gadot (actress)', 'Michael Douglas (actor)'
+            'Gal Gadot (actress)', 'Michael Douglas (actor)', 'Jerry Seinfeld (comedian)', 'Kareem Abdul-Jabbar (NBA player)', 'Dwayne Johnson (actor)', 'LeBron James (NBA player)', 'Kim Kardashian (model)', 
+            'Tom Brady (NFL player)', 'Mark Zuckerberg (entrepeneur)', 'Josh Gad (actor)', 'U2 (band)', 'Guy Oseary (talent manager)', 'Mayim Bialik (actress)', 'Amy Schumer (comedian)', 
+            'Barbara Streisand (actress and musician)', 'Amare Stoudemire (NBA player)', 'Sarah Silverman (comedian)', 'Bar Rafeali (supermodel)', 'Noah Schnapp (actor)', 
+            'Ronan Rubinstein (actor)', 'Natalie Portman (actress)', 'Madonna (musician)', 'Floyd Mayweather (boxer)', 'Scooter Braun (talent manager)', 'Josh Malina (actor)', 'Isla Fisher (actress)',
+            'Ron Perlman (actor)', 'Chelsea Handler (comedian)', 'Yael Grobglas (actor)', 'Mark Hamill (actor)', 'Sofia Richie (model)', 'Ashley Tisdale (actress and singer)', 
+            'Sarah Michelle Gellar (actress)', 'Liev Schreiber (actor and director)', 'Nina Dobrev (actress)', 'Max Greenfield (actor)', 'Chris Pine (actor)', 'Debra Messing (actress)',
+            'Bryan Lourd (talent agent)', 'Richard Lovett (talent agent)', 'Ryan Murphy (director)', 'Zachary Levi (actor and singer)', 'Sharon Osbourne (TV personality)',
+            'Tracey-Ann Oberman (actress)', 'George Lopez (comedian)', 'Phil Rosenthal (television writer)', 'Mekhi Phifer (actor)', 'Diane Warren (songwriter)',
+            'Haim Saban (media proprietor and investor)', 'Irving Azoff (entrepeneur)', 'Ynon Kreiz (entrepeneur)', 'Jody Gerson (entrepeneur)', 'Rick Yorn (producer)',
+            'Howie Mandel (comedian and television actor)', 'Sherry Lansing (entrepeneur)', 'Rick Yorn (producer)', 'Tom Rothman (film executive and businessman)', 'Julian Edelman (NFL player)',
+            'Antoine Fuqua (film director)'
         ];
+
+        // Combine both lists for autocomplete suggestions
+        const allCelebrities = [...supportedCelebrities, ...nonSupportingCelebrities];
 
         function checkSupport() {
             var celebrityName = document.getElementById('celebrityName').value;
@@ -243,6 +256,14 @@
                 overlayElement.style.display = 'none';
             });
         }
+
+        // Populate the datalist with autocomplete options
+        var datalist = document.getElementById('celebrityList');
+        allCelebrities.forEach(function (celebrity) {
+            var option = document.createElement('option');
+            option.value = celebrity;
+            datalist.appendChild(option);
+        });
     </script>
 </body>
 </html>
