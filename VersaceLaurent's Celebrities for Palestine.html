@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celebrity Support Checker</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            color: #1a1a1a;
+        }
+
+        header {
+            color: #1a1a1a;
+            padding: 1em;
+            text-align: center;
+        }
+
+        main {
+            max-width: 600px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+
+        #infoText {
+            font-size: 14px;
+            margin-bottom: 1em;
+        }
+
+        input {
+            width: calc(100% - 2em);
+            padding: 0.5em;
+            margin-bottom: 1em;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 0.5em 1em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 1em;
+            font-weight: bold;
+        }
+
+        /* Styles for text colors */
+        .red-text {
+            color: red;
+        }
+
+        .green-text {
+            color: green;
+        }
+
+        /* Styles for pop-up box */
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 1em;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        #popup.okay {
+            background-color: green;
+            color: white;
+        }
+
+        #popup.not-okay {
+            background-color: red;
+            color: white;
+        }
+
+        #popup.unknown {
+            background-color: rgb(37, 37, 37);
+            color: white;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Styles for the hyperlink */
+        #translateLink {
+            display: block;
+            margin-top: 1em;
+            text-align: center;
+            text-decoration: underline;
+            color: #1a1a1a;
+        }
+    </style>
+
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>VersaceLaurent's Celebrities for Palestine</h1>
+    </header>
+
+    <main>
+        <div id="infoText">Informing you about celebrities and their stances on the Israel-Palestine Conflict.</div>
+        <label for="celebrityName">Enter Celebrity Name:</label>
+        <input type="text" id="celebrityName" list="celebrityList" placeholder="Enter celebrity name here">
+
+        <!-- Datalist for autofill suggestions -->
+        <datalist id="celebrityList">
+            <!-- Loop through the supported celebrities and create options -->
+            <?php foreach ($supportedCelebrities as $celebrity): ?>
+                <option value="<?= $celebrity; ?>">
+            <?php endforeach; ?>
+        </datalist>
+
+        <button onclick="checkSupport()">Click here to check!</button>
+
+        <div id="result"></div>
+
+        <!-- Pop-up box and overlay -->
+        <div id="overlay"></div>
+        <div id="popup"></div>
+
+        <!-- Hyperlink for translation help -->
+        <a href="#" id="translateLink" onclick="alert('Please contact our support for translation assistance.'); return false;">Can you help translate this page for us? Click here.</a>
+    </main>
+
+    <script>
+        // List of supported celebrities
+        const supportedCelebrities = [
+            'Jenna Ortega (actress)', 'Melissa Barrera (actress)', 'Kehlani (musician)', 'Kyrie Irving (NBA player)',
+            'Kid Cudi (musician)', 'Biaggio Ali Walsh (boxer)', 'Gigi Hadid (model)', 'Michael Bennett (NFL player)',
+            'Hend Sabry (actress)', 'Mohamed Ramadan (actor and musician)', 'Saad Lamjarred (actor and musician)',
+            'Juan Diego Botto (actor)', 'Kaia Gerber (model)', 'Lucy Bronze (football/soccer player)', 'Susan Sarandon (actress)',
+            'Esther Acebo (actress)', 'Lori Harvey (model)', 'Amir el Masry (actor)', 'Elma Aveiro (beautician & sister of Cristiano Ronaldo)',
+            'SKA-P (band)', 'Leah Williamson (football/soccer player)', 'Liam Cunningham (actor)', 'Victoria Pedretti (actress)',
+            'Islam Slimani (football/soccer player)', 'Victoria Monet (musician)', 'Halsey (musician)', 'Gabriele Muccino (director)',
+            'Diane Guerrero (actress)', 'Dries Mertens (football/soccer player)', 'Lena Headey (actress)', 'Marcia Cross (actress)',
+            'Simone Ashley (actress)', 'Lorde (musician)', 'Sonam Kapoor (actress)', 'Melanie Martinez (musician)',
+            'Mark Ruffalo (actor)', 'Cornel West (philosopher)', 'Redveil (musician)', 'Ariel Tejada (makeup artist)',
+            'Hillari Alison (musician)', 'Swar Bhasker (actress)', 'James Blunt (musician)', 'Solange Knowles (musician & sister of Beyoncé)',
+            'Greta Thunberg (activist)', 'Real Sociedad (football/soccer club fans)', 'Celtic Ultras (football/soccer club fans)',
+            'Liverpool FC (football/soccer club fans)', 'Bonnie Wright (actress)', 'Maria Guardiola (daughter of Pep Guardiola)',
+            'Carice Van Houten (actress)', 'Tom Morello (musician)', 'Amerie (musician)', 'Asa Butterfield (actress)',
+            'Yacine Brahimi (football/soccer player)', 'Lewis Hamilton (formula 1 driver)', 'SZA (musician)', 'Maya Jama (tv personality)',
+            'Huda Kattan (beautician)', 'Joe Cole (actor)', 'Hector Bellerin (football/soccer player)', 'Mo Amer (comedian)',
+            'Summer Walker (musician)', 'Little Simz (musician)', 'Lauren Jauregui (musician)', 'Rupi Kaur (poet)',
+            'Vanessa Redgrave (actress)', 'Kelly Piquet (model)', 'Chance the Rapper (musician)', 'Marina Diamandis (musician)',
+            'Florence Pugh (actress)', 'Macklemore (musician)', 'Antonio de Matteo (actor)', 'Hakim Ziyech (football/soccer player)',
+            'Anwar el-Ghazi (football/soccer player)', 'BJÖRK (musician)', 'Zayn Malik (musician)', 'Frank Ocean (musician)',
+            'Aurora (musician and record producer)', 'Aimee Lou Wood (actress)', 'Ons Jaber (tennis player)', 'Angelina Jolie (actress)',
+            'AneesTheRapper (musician)', 'Roger Waters (musician)', 'Drake (musician)', 'Zendaya (actress)', 'Hozier (musician)',
+            'Queen Latifah (actress & musician)', 'Jennifer Lopez (musician)', 'Ben Affleck (actor)', 'Indya Moore (actress)',
+            'AJ Tracey (musician)', 'Natasha Cloud (WNBA player)', 'Stormzy (musician)', 'Dave Chappelle (comedian)', 'Dua Lipa (musician)',
+            'ISHOWSPEED (internet personality)', 'Nicola Coughlan (actress)', 'John Legend (musician)', 'Joaquin Phoenix (actress)',
+            'Tabria Majors (musician)', 'Islam Makhachev (UFC fighter)', 'Mesut Ozil (football/soccer player)', 'Amr Diab (musician)',
+            'Noussair Mazraoui (football/soccer player)', 'Karim Benzema (football/soccer player)', 'Rafaela Plastira (model)',
+            'DJ Snake (musician and disc jockey)'
+        ];
+
+        // List of supported celebrities who do not support the position
+        const nonSupportingCelebrities = [
+            'Gal Gadot (actress)'
+        ];
+
+        function checkSupport() {
+            var celebrityName = document.getElementById('celebrityName').value;
+            var resultElement = document.getElementById('result');
+            var popupElement = document.getElementById('popup');
+            var overlayElement = document.getElementById('overlay');
+
+            // Check if the user has entered a celebrity name
+            if (!celebrityName) {
+                resultElement.innerHTML = `<span class="black-text">Error: Please enter a celebrity's name into the box.</span>`;
+                popupElement.innerHTML = `<span class="black-text">Error: Please enter a celebrity's name into the box.</span>`;
+                popupElement.className = 'not-okay';
+            } else {
+                // Check if the entered text matches any supported celebrity who supports the position
+                if (supportedCelebrities.some(name => name.toLowerCase().includes(celebrityName.toLowerCase()))) {
+                    resultElement.innerHTML = `<span class="green-text">${celebrityName} supports Palestine!</span>`;
+                    popupElement.innerHTML = `<span class="white-text">${celebrityName} supports Palestine!</span>`;
+                    popupElement.className = 'okay';
+                } else if (nonSupportingCelebrities.some(name => name.toLowerCase().includes(celebrityName.toLowerCase()))) {
+                    // Check if the entered text matches any supported celebrity who does not support the position
+                    resultElement.innerHTML = `<span class="red-text">${celebrityName} does not support Palestine.</span>`;
+                    popupElement.innerHTML = `<span class="white-text">${celebrityName} does not support Palestine.</span>`;
+                    popupElement.className = 'not-okay';
+                } else {
+                    // Celebrity is not in either list
+                    resultElement.innerHTML = `<span class="unknown-text">${celebrityName}'s stance is unknown.</span>`;
+                    popupElement.innerHTML = `<span class="white-text">${celebrityName}'s stance is unknown.</span>`;
+                    popupElement.className = 'unknown';
+                }
+            }
+
+            // Display the overlay and fade in the pop-up box
+            overlayElement.style.display = 'block';
+            popupElement.style.display = 'block';
+            $(popupElement).fadeIn();
+
+            // Close the pop-up box when the "Okay" button is clicked
+            $('#popup').click(function () {
+                $(popupElement).fadeOut();
+                overlayElement.style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
